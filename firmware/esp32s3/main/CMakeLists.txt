@@ -1,0 +1,27 @@
+idf_component_register(
+    SRCS
+        "air_quality_parser.cpp"
+        "air_quality_validator.cpp"
+        "main.cpp"
+        "otlp_exporter.cpp"
+        "otlp_payload_builder.cpp"
+        "sample_format.cpp"
+        "status_led.cpp"
+        "status_led_controller.cpp"
+        "time_sync.cpp"
+        "usb_air_quality_reader.cpp"
+        "wifi_station.cpp"
+    INCLUDE_DIRS "."
+    REQUIRES
+        esp_driver_gpio
+        esp_event
+        esp_http_client
+        esp_netif
+        esp_wifi
+        espressif__led_strip
+        json
+        nvs_flash
+        usb
+        espressif__usb_host_cdc_acm
+        espressif__usb_host_vcp
+)

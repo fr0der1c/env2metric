@@ -1,0 +1,1611 @@
+{
+  "description": "由 env2metric 通过 OpenTelemetry 上报的室内空气质量指标。",
+  "layout": [
+    {
+      "h": 5,
+      "i": "env2metric-pm25-current",
+      "moved": false,
+      "static": false,
+      "w": 2,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "h": 5,
+      "i": "env2metric-co2-current",
+      "moved": false,
+      "static": false,
+      "w": 2,
+      "x": 2,
+      "y": 0
+    },
+    {
+      "h": 5,
+      "i": "env2metric-hcho-current",
+      "moved": false,
+      "static": false,
+      "w": 2,
+      "x": 4,
+      "y": 0
+    },
+    {
+      "h": 5,
+      "i": "env2metric-temperature-current",
+      "moved": false,
+      "static": false,
+      "w": 2,
+      "x": 6,
+      "y": 0
+    },
+    {
+      "h": 5,
+      "i": "env2metric-voc-current",
+      "moved": false,
+      "static": false,
+      "w": 2,
+      "x": 8,
+      "y": 0
+    },
+    {
+      "h": 5,
+      "i": "env2metric-humidity-current",
+      "moved": false,
+      "static": false,
+      "w": 2,
+      "x": 10,
+      "y": 0
+    },
+    {
+      "h": 7,
+      "i": "env2metric-pm25-trend",
+      "moved": false,
+      "static": false,
+      "w": 6,
+      "x": 0,
+      "y": 5
+    },
+    {
+      "h": 7,
+      "i": "env2metric-co2-trend",
+      "moved": false,
+      "static": false,
+      "w": 6,
+      "x": 6,
+      "y": 5
+    },
+    {
+      "h": 7,
+      "i": "env2metric-hcho-trend",
+      "moved": false,
+      "static": false,
+      "w": 6,
+      "x": 0,
+      "y": 12
+    },
+    {
+      "h": 7,
+      "i": "env2metric-voc-trend",
+      "moved": false,
+      "static": false,
+      "w": 6,
+      "x": 6,
+      "y": 12
+    },
+    {
+      "h": 7,
+      "i": "env2metric-temperature-trend",
+      "moved": false,
+      "static": false,
+      "w": 6,
+      "x": 0,
+      "y": 19
+    },
+    {
+      "h": 7,
+      "i": "env2metric-humidity-trend",
+      "moved": false,
+      "static": false,
+      "w": 6,
+      "x": 6,
+      "y": 19
+    },
+    {
+      "h": 7,
+      "i": "env2metric-particle-trend",
+      "moved": false,
+      "static": false,
+      "w": 12,
+      "x": 0,
+      "y": 26
+    }
+  ],
+  "panelMap": {},
+  "tags": [
+    "env2metric",
+    "空气质量",
+    "OpenTelemetry"
+  ],
+  "title": "env2metric 室内空气质量",
+  "uploadedGrafana": false,
+  "variables": {},
+  "version": "v5",
+  "widgets": [
+    {
+      "bucketCount": 30,
+      "bucketWidth": 0,
+      "columnUnits": {},
+      "description": "最近一次采集到的 PM2.5 浓度。",
+      "fillMode": "none",
+      "fillSpans": false,
+      "id": "env2metric-pm25-current",
+      "isLogScale": false,
+      "legendPosition": "bottom",
+      "lineInterpolation": "spline",
+      "lineStyle": "solid",
+      "mergeAllActiveQueries": false,
+      "nullZeroValues": "zero",
+      "opacity": "1",
+      "panelTypes": "value",
+      "query": {
+        "builder": {
+          "queryData": [
+            {
+              "aggregations": [
+                {
+                  "metricName": "env2metric.air.pm25",
+                  "reduceTo": "last",
+                  "spaceAggregation": "avg",
+                  "temporality": "",
+                  "timeAggregation": "latest"
+                }
+              ],
+              "dataSource": "metrics",
+              "disabled": false,
+              "expression": "A",
+              "filter": {
+                "expression": ""
+              },
+              "filters": {
+                "items": [],
+                "op": "AND"
+              },
+              "functions": [],
+              "groupBy": [],
+              "having": {
+                "expression": ""
+              },
+              "legend": "PM2.5",
+              "limit": null,
+              "orderBy": [],
+              "queryName": "A",
+              "source": "",
+              "stepInterval": null
+            }
+          ],
+          "queryFormulas": [],
+          "queryTraceOperator": []
+        },
+        "clickhouse_sql": [
+          {
+            "disabled": false,
+            "legend": "",
+            "name": "A",
+            "query": ""
+          }
+        ],
+        "id": "env2metric-pm25-current-query",
+        "promql": [
+          {
+            "disabled": false,
+            "legend": "",
+            "name": "A",
+            "query": ""
+          }
+        ],
+        "queryType": "builder",
+        "unit": ""
+      },
+      "selectedLogFields": [],
+      "selectedTracesFields": [],
+      "softMax": null,
+      "softMin": null,
+      "stackedBarChart": false,
+      "thresholds": [
+        {
+          "index": "pm25-good",
+          "thresholdValue": 50,
+          "thresholdFormat": "Text",
+          "thresholdOperator": "<",
+          "thresholdColor": "#43a047",
+          "thresholdUnit": "µg/m³",
+          "thresholdLabel": "优：50 µg/m³ 以下"
+        },
+        {
+          "index": "pm25-limit",
+          "thresholdValue": 50,
+          "thresholdFormat": "Text",
+          "thresholdOperator": ">",
+          "thresholdColor": "#e53935",
+          "thresholdUnit": "µg/m³",
+          "thresholdLabel": "参考限值 50 µg/m³"
+        }
+      ],
+      "timePreferance": "GLOBAL_TIME",
+      "title": "当前 PM2.5（µg/m³）",
+      "yAxisUnit": "µg/m³"
+    },
+    {
+      "bucketCount": 30,
+      "bucketWidth": 0,
+      "columnUnits": {},
+      "description": "最近一次采集到的二氧化碳浓度。",
+      "fillMode": "none",
+      "fillSpans": false,
+      "id": "env2metric-co2-current",
+      "isLogScale": false,
+      "legendPosition": "bottom",
+      "lineInterpolation": "spline",
+      "lineStyle": "solid",
+      "mergeAllActiveQueries": false,
+      "nullZeroValues": "zero",
+      "opacity": "1",
+      "panelTypes": "value",
+      "query": {
+        "builder": {
+          "queryData": [
+            {
+              "aggregations": [
+                {
+                  "metricName": "env2metric.air.co2",
+                  "reduceTo": "last",
+                  "spaceAggregation": "avg",
+                  "temporality": "",
+                  "timeAggregation": "latest"
+                }
+              ],
+              "dataSource": "metrics",
+              "disabled": false,
+              "expression": "A",
+              "filter": {
+                "expression": ""
+              },
+              "filters": {
+                "items": [],
+                "op": "AND"
+              },
+              "functions": [],
+              "groupBy": [],
+              "having": {
+                "expression": ""
+              },
+              "legend": "CO2",
+              "limit": null,
+              "orderBy": [],
+              "queryName": "A",
+              "source": "",
+              "stepInterval": null
+            }
+          ],
+          "queryFormulas": [],
+          "queryTraceOperator": []
+        },
+        "clickhouse_sql": [
+          {
+            "disabled": false,
+            "legend": "",
+            "name": "A",
+            "query": ""
+          }
+        ],
+        "id": "env2metric-co2-current-query",
+        "promql": [
+          {
+            "disabled": false,
+            "legend": "",
+            "name": "A",
+            "query": ""
+          }
+        ],
+        "queryType": "builder",
+        "unit": ""
+      },
+      "selectedLogFields": [],
+      "selectedTracesFields": [],
+      "softMax": null,
+      "softMin": null,
+      "stackedBarChart": false,
+      "thresholds": [
+        {
+          "index": "co2-level-1",
+          "thresholdValue": 700,
+          "thresholdFormat": "Text",
+          "thresholdOperator": "<",
+          "thresholdColor": "#43a047",
+          "thresholdUnit": "ppm",
+          "thresholdLabel": "优：700 ppm 以下"
+        },
+        {
+          "index": "co2-level-2",
+          "thresholdValue": 700,
+          "thresholdFormat": "Text",
+          "thresholdOperator": ">",
+          "thresholdColor": "#1e88e5",
+          "thresholdUnit": "ppm",
+          "thresholdLabel": "良：700 ppm"
+        },
+        {
+          "index": "co2-level-3",
+          "thresholdValue": 1000,
+          "thresholdFormat": "Text",
+          "thresholdOperator": ">",
+          "thresholdColor": "#f9ab00",
+          "thresholdUnit": "ppm",
+          "thresholdLabel": "轻度污染：1000 ppm"
+        },
+        {
+          "index": "co2-level-4",
+          "thresholdValue": 1500,
+          "thresholdFormat": "Text",
+          "thresholdOperator": ">",
+          "thresholdColor": "#fb8c00",
+          "thresholdUnit": "ppm",
+          "thresholdLabel": "中度污染：1500 ppm"
+        },
+        {
+          "index": "co2-level-5",
+          "thresholdValue": 2000,
+          "thresholdFormat": "Text",
+          "thresholdOperator": ">",
+          "thresholdColor": "#e53935",
+          "thresholdUnit": "ppm",
+          "thresholdLabel": "重度污染：2000 ppm"
+        }
+      ],
+      "timePreferance": "GLOBAL_TIME",
+      "title": "当前 CO2（ppm）",
+      "yAxisUnit": "ppm"
+    },
+    {
+      "bucketCount": 30,
+      "bucketWidth": 0,
+      "columnUnits": {},
+      "description": "最近一次采集到的温度。",
+      "fillMode": "none",
+      "fillSpans": false,
+      "id": "env2metric-temperature-current",
+      "isLogScale": false,
+      "legendPosition": "bottom",
+      "lineInterpolation": "spline",
+      "lineStyle": "solid",
+      "mergeAllActiveQueries": false,
+      "nullZeroValues": "zero",
+      "opacity": "1",
+      "panelTypes": "value",
+      "query": {
+        "builder": {
+          "queryData": [
+            {
+              "aggregations": [
+                {
+                  "metricName": "env2metric.air.temperature",
+                  "reduceTo": "last",
+                  "spaceAggregation": "avg",
+                  "temporality": "",
+                  "timeAggregation": "latest"
+                }
+              ],
+              "dataSource": "metrics",
+              "disabled": false,
+              "expression": "A",
+              "filter": {
+                "expression": ""
+              },
+              "filters": {
+                "items": [],
+                "op": "AND"
+              },
+              "functions": [],
+              "groupBy": [],
+              "having": {
+                "expression": ""
+              },
+              "legend": "温度",
+              "limit": null,
+              "orderBy": [],
+              "queryName": "A",
+              "source": "",
+              "stepInterval": null
+            }
+          ],
+          "queryFormulas": [],
+          "queryTraceOperator": []
+        },
+        "clickhouse_sql": [
+          {
+            "disabled": false,
+            "legend": "",
+            "name": "A",
+            "query": ""
+          }
+        ],
+        "id": "env2metric-temperature-current-query",
+        "promql": [
+          {
+            "disabled": false,
+            "legend": "",
+            "name": "A",
+            "query": ""
+          }
+        ],
+        "queryType": "builder",
+        "unit": ""
+      },
+      "selectedLogFields": [],
+      "selectedTracesFields": [],
+      "softMax": null,
+      "softMin": null,
+      "stackedBarChart": false,
+      "thresholds": [
+        {
+          "index": "temperature-low",
+          "thresholdValue": 18,
+          "thresholdFormat": "Text",
+          "thresholdOperator": "<",
+          "thresholdColor": "#1e88e5",
+          "thresholdUnit": "°C",
+          "thresholdLabel": "舒适下限 18 ℃"
+        },
+        {
+          "index": "temperature-comfort",
+          "thresholdValue": 18,
+          "thresholdFormat": "Text",
+          "thresholdOperator": ">",
+          "thresholdColor": "#43a047",
+          "thresholdUnit": "°C",
+          "thresholdLabel": "舒适区间 18-25.5 ℃"
+        },
+        {
+          "index": "temperature-high",
+          "thresholdValue": 25.5,
+          "thresholdFormat": "Text",
+          "thresholdOperator": ">",
+          "thresholdColor": "#f9ab00",
+          "thresholdUnit": "°C",
+          "thresholdLabel": "舒适上限 25.5 ℃"
+        }
+      ],
+      "timePreferance": "GLOBAL_TIME",
+      "title": "当前温度（℃）",
+      "yAxisUnit": "°C"
+    },
+    {
+      "bucketCount": 30,
+      "bucketWidth": 0,
+      "columnUnits": {},
+      "description": "最近一次采集到的相对湿度。",
+      "fillMode": "none",
+      "fillSpans": false,
+      "id": "env2metric-humidity-current",
+      "isLogScale": false,
+      "legendPosition": "bottom",
+      "lineInterpolation": "spline",
+      "lineStyle": "solid",
+      "mergeAllActiveQueries": false,
+      "nullZeroValues": "zero",
+      "opacity": "1",
+      "panelTypes": "value",
+      "query": {
+        "builder": {
+          "queryData": [
+            {
+              "aggregations": [
+                {
+                  "metricName": "env2metric.air.humidity",
+                  "reduceTo": "last",
+                  "spaceAggregation": "avg",
+                  "temporality": "",
+                  "timeAggregation": "latest"
+                }
+              ],
+              "dataSource": "metrics",
+              "disabled": false,
+              "expression": "A",
+              "filter": {
+                "expression": ""
+              },
+              "filters": {
+                "items": [],
+                "op": "AND"
+              },
+              "functions": [],
+              "groupBy": [],
+              "having": {
+                "expression": ""
+              },
+              "legend": "湿度",
+              "limit": null,
+              "orderBy": [],
+              "queryName": "A",
+              "source": "",
+              "stepInterval": null
+            }
+          ],
+          "queryFormulas": [],
+          "queryTraceOperator": []
+        },
+        "clickhouse_sql": [
+          {
+            "disabled": false,
+            "legend": "",
+            "name": "A",
+            "query": ""
+          }
+        ],
+        "id": "env2metric-humidity-current-query",
+        "promql": [
+          {
+            "disabled": false,
+            "legend": "",
+            "name": "A",
+            "query": ""
+          }
+        ],
+        "queryType": "builder",
+        "unit": ""
+      },
+      "selectedLogFields": [],
+      "selectedTracesFields": [],
+      "softMax": null,
+      "softMin": null,
+      "stackedBarChart": false,
+      "thresholds": [
+        {
+          "index": "humidity-low",
+          "thresholdValue": 40,
+          "thresholdFormat": "Text",
+          "thresholdOperator": "<",
+          "thresholdColor": "#1e88e5",
+          "thresholdUnit": "%",
+          "thresholdLabel": "舒适下限 40 %"
+        },
+        {
+          "index": "humidity-comfort",
+          "thresholdValue": 40,
+          "thresholdFormat": "Text",
+          "thresholdOperator": ">",
+          "thresholdColor": "#43a047",
+          "thresholdUnit": "%",
+          "thresholdLabel": "舒适区间 40-60 %"
+        },
+        {
+          "index": "humidity-high",
+          "thresholdValue": 60,
+          "thresholdFormat": "Text",
+          "thresholdOperator": ">",
+          "thresholdColor": "#f9ab00",
+          "thresholdUnit": "%",
+          "thresholdLabel": "舒适上限 60 %"
+        }
+      ],
+      "timePreferance": "GLOBAL_TIME",
+      "title": "当前湿度（%）",
+      "yAxisUnit": "%"
+    },
+    {
+      "bucketCount": 30,
+      "bucketWidth": 0,
+      "columnUnits": {},
+      "description": "最近一次采集到的甲醛浓度。",
+      "fillMode": "none",
+      "fillSpans": false,
+      "id": "env2metric-hcho-current",
+      "isLogScale": false,
+      "legendPosition": "bottom",
+      "lineInterpolation": "spline",
+      "lineStyle": "solid",
+      "mergeAllActiveQueries": false,
+      "nullZeroValues": "zero",
+      "opacity": "1",
+      "panelTypes": "value",
+      "query": {
+        "builder": {
+          "queryData": [
+            {
+              "aggregations": [
+                {
+                  "metricName": "env2metric.air.hcho",
+                  "reduceTo": "last",
+                  "spaceAggregation": "avg",
+                  "temporality": "",
+                  "timeAggregation": "latest"
+                }
+              ],
+              "dataSource": "metrics",
+              "disabled": false,
+              "expression": "A",
+              "filter": {
+                "expression": ""
+              },
+              "filters": {
+                "items": [],
+                "op": "AND"
+              },
+              "functions": [],
+              "groupBy": [],
+              "having": {
+                "expression": ""
+              },
+              "legend": "甲醛",
+              "limit": null,
+              "orderBy": [],
+              "queryName": "A",
+              "source": "",
+              "stepInterval": null
+            }
+          ],
+          "queryFormulas": [],
+          "queryTraceOperator": []
+        },
+        "clickhouse_sql": [
+          {
+            "disabled": false,
+            "legend": "",
+            "name": "A",
+            "query": ""
+          }
+        ],
+        "id": "env2metric-hcho-current-query",
+        "promql": [
+          {
+            "disabled": false,
+            "legend": "",
+            "name": "A",
+            "query": ""
+          }
+        ],
+        "queryType": "builder",
+        "unit": ""
+      },
+      "selectedLogFields": [],
+      "selectedTracesFields": [],
+      "softMax": null,
+      "softMin": null,
+      "stackedBarChart": false,
+      "thresholds": [
+        {
+          "index": "hcho-level-1",
+          "thresholdValue": 80,
+          "thresholdFormat": "Text",
+          "thresholdOperator": "<",
+          "thresholdColor": "#43a047",
+          "thresholdUnit": "µg/m³",
+          "thresholdLabel": "优：80 µg/m³ 以下"
+        },
+        {
+          "index": "hcho-level-2",
+          "thresholdValue": 80,
+          "thresholdFormat": "Text",
+          "thresholdOperator": ">",
+          "thresholdColor": "#1e88e5",
+          "thresholdUnit": "µg/m³",
+          "thresholdLabel": "良：80 µg/m³"
+        },
+        {
+          "index": "hcho-level-3",
+          "thresholdValue": 120,
+          "thresholdFormat": "Text",
+          "thresholdOperator": ">",
+          "thresholdColor": "#f9ab00",
+          "thresholdUnit": "µg/m³",
+          "thresholdLabel": "轻度污染：120 µg/m³"
+        },
+        {
+          "index": "hcho-level-4",
+          "thresholdValue": 200,
+          "thresholdFormat": "Text",
+          "thresholdOperator": ">",
+          "thresholdColor": "#fb8c00",
+          "thresholdUnit": "µg/m³",
+          "thresholdLabel": "中度污染：200 µg/m³"
+        },
+        {
+          "index": "hcho-level-5",
+          "thresholdValue": 400,
+          "thresholdFormat": "Text",
+          "thresholdOperator": ">",
+          "thresholdColor": "#e53935",
+          "thresholdUnit": "µg/m³",
+          "thresholdLabel": "重度污染：400 µg/m³"
+        }
+      ],
+      "timePreferance": "GLOBAL_TIME",
+      "title": "当前甲醛（µg/m³）",
+      "yAxisUnit": "µg/m³"
+    },
+    {
+      "bucketCount": 30,
+      "bucketWidth": 0,
+      "columnUnits": {},
+      "description": "最近一次采集到的 VOC 浓度。",
+      "fillMode": "none",
+      "fillSpans": false,
+      "id": "env2metric-voc-current",
+      "isLogScale": false,
+      "legendPosition": "bottom",
+      "lineInterpolation": "spline",
+      "lineStyle": "solid",
+      "mergeAllActiveQueries": false,
+      "nullZeroValues": "zero",
+      "opacity": "1",
+      "panelTypes": "value",
+      "query": {
+        "builder": {
+          "queryData": [
+            {
+              "aggregations": [
+                {
+                  "metricName": "env2metric.air.voc",
+                  "reduceTo": "last",
+                  "spaceAggregation": "avg",
+                  "temporality": "",
+                  "timeAggregation": "latest"
+                }
+              ],
+              "dataSource": "metrics",
+              "disabled": false,
+              "expression": "A",
+              "filter": {
+                "expression": ""
+              },
+              "filters": {
+                "items": [],
+                "op": "AND"
+              },
+              "functions": [],
+              "groupBy": [],
+              "having": {
+                "expression": ""
+              },
+              "legend": "VOC",
+              "limit": null,
+              "orderBy": [],
+              "queryName": "A",
+              "source": "",
+              "stepInterval": null
+            }
+          ],
+          "queryFormulas": [],
+          "queryTraceOperator": []
+        },
+        "clickhouse_sql": [
+          {
+            "disabled": false,
+            "legend": "",
+            "name": "A",
+            "query": ""
+          }
+        ],
+        "id": "env2metric-voc-current-query",
+        "promql": [
+          {
+            "disabled": false,
+            "legend": "",
+            "name": "A",
+            "query": ""
+          }
+        ],
+        "queryType": "builder",
+        "unit": ""
+      },
+      "selectedLogFields": [],
+      "selectedTracesFields": [],
+      "softMax": null,
+      "softMin": null,
+      "stackedBarChart": false,
+      "thresholds": [
+        {
+          "index": "voc-level-1",
+          "thresholdValue": 0.22,
+          "thresholdFormat": "Text",
+          "thresholdOperator": "<",
+          "thresholdColor": "#43a047",
+          "thresholdUnit": "ppm",
+          "thresholdLabel": "优：0.22 ppm 以下"
+        },
+        {
+          "index": "voc-level-2",
+          "thresholdValue": 0.22,
+          "thresholdFormat": "Text",
+          "thresholdOperator": ">",
+          "thresholdColor": "#1e88e5",
+          "thresholdUnit": "ppm",
+          "thresholdLabel": "良：0.22 ppm"
+        },
+        {
+          "index": "voc-level-3",
+          "thresholdValue": 0.44,
+          "thresholdFormat": "Text",
+          "thresholdOperator": ">",
+          "thresholdColor": "#f9ab00",
+          "thresholdUnit": "ppm",
+          "thresholdLabel": "轻度污染：0.44 ppm"
+        },
+        {
+          "index": "voc-level-4",
+          "thresholdValue": 0.88,
+          "thresholdFormat": "Text",
+          "thresholdOperator": ">",
+          "thresholdColor": "#fb8c00",
+          "thresholdUnit": "ppm",
+          "thresholdLabel": "中度污染：0.88 ppm"
+        },
+        {
+          "index": "voc-level-5",
+          "thresholdValue": 1.76,
+          "thresholdFormat": "Text",
+          "thresholdOperator": ">",
+          "thresholdColor": "#e53935",
+          "thresholdUnit": "ppm",
+          "thresholdLabel": "重度污染：1.76 ppm"
+        }
+      ],
+      "timePreferance": "GLOBAL_TIME",
+      "title": "当前 VOC（ppm）",
+      "yAxisUnit": "ppm"
+    },
+    {
+      "bucketCount": 30,
+      "bucketWidth": 0,
+      "columnUnits": {},
+      "description": "PM2.5 浓度随时间变化。",
+      "fillMode": "none",
+      "fillSpans": false,
+      "id": "env2metric-pm25-trend",
+      "isLogScale": false,
+      "legendPosition": "bottom",
+      "lineInterpolation": "spline",
+      "lineStyle": "solid",
+      "mergeAllActiveQueries": false,
+      "nullZeroValues": "zero",
+      "opacity": "1",
+      "panelTypes": "graph",
+      "query": {
+        "builder": {
+          "queryData": [
+            {
+              "aggregations": [
+                {
+                  "metricName": "env2metric.air.pm25",
+                  "reduceTo": "avg",
+                  "spaceAggregation": "avg",
+                  "temporality": "",
+                  "timeAggregation": "avg"
+                }
+              ],
+              "dataSource": "metrics",
+              "disabled": false,
+              "expression": "A",
+              "filter": {
+                "expression": ""
+              },
+              "filters": {
+                "items": [],
+                "op": "AND"
+              },
+              "functions": [],
+              "groupBy": [],
+              "having": {
+                "expression": ""
+              },
+              "legend": "PM2.5",
+              "limit": null,
+              "orderBy": [],
+              "queryName": "A",
+              "source": "",
+              "stepInterval": 60
+            }
+          ],
+          "queryFormulas": [],
+          "queryTraceOperator": []
+        },
+        "clickhouse_sql": [
+          {
+            "disabled": false,
+            "legend": "",
+            "name": "A",
+            "query": ""
+          }
+        ],
+        "id": "env2metric-pm25-trend-query",
+        "promql": [
+          {
+            "disabled": false,
+            "legend": "",
+            "name": "A",
+            "query": ""
+          }
+        ],
+        "queryType": "builder",
+        "unit": ""
+      },
+      "selectedLogFields": [],
+      "selectedTracesFields": [],
+      "softMax": null,
+      "softMin": null,
+      "stackedBarChart": false,
+      "thresholds": [
+        {
+          "index": "pm25-limit",
+          "thresholdValue": 50,
+          "thresholdFormat": "Text",
+          "thresholdOperator": ">",
+          "thresholdColor": "#e53935",
+          "thresholdUnit": "µg/m³",
+          "thresholdLabel": "参考限值 50 µg/m³"
+        }
+      ],
+      "timePreferance": "GLOBAL_TIME",
+      "title": "PM2.5 趋势（µg/m³）",
+      "yAxisUnit": "µg/m³"
+    },
+    {
+      "bucketCount": 30,
+      "bucketWidth": 0,
+      "columnUnits": {},
+      "description": "CO2 浓度随时间变化。",
+      "fillMode": "none",
+      "fillSpans": false,
+      "id": "env2metric-co2-trend",
+      "isLogScale": false,
+      "legendPosition": "bottom",
+      "lineInterpolation": "spline",
+      "lineStyle": "solid",
+      "mergeAllActiveQueries": false,
+      "nullZeroValues": "zero",
+      "opacity": "1",
+      "panelTypes": "graph",
+      "query": {
+        "builder": {
+          "queryData": [
+            {
+              "aggregations": [
+                {
+                  "metricName": "env2metric.air.co2",
+                  "reduceTo": "avg",
+                  "spaceAggregation": "avg",
+                  "temporality": "",
+                  "timeAggregation": "avg"
+                }
+              ],
+              "dataSource": "metrics",
+              "disabled": false,
+              "expression": "A",
+              "filter": {
+                "expression": ""
+              },
+              "filters": {
+                "items": [],
+                "op": "AND"
+              },
+              "functions": [],
+              "groupBy": [],
+              "having": {
+                "expression": ""
+              },
+              "legend": "CO2",
+              "limit": null,
+              "orderBy": [],
+              "queryName": "A",
+              "source": "",
+              "stepInterval": 60
+            }
+          ],
+          "queryFormulas": [],
+          "queryTraceOperator": []
+        },
+        "clickhouse_sql": [
+          {
+            "disabled": false,
+            "legend": "",
+            "name": "A",
+            "query": ""
+          }
+        ],
+        "id": "env2metric-co2-trend-query",
+        "promql": [
+          {
+            "disabled": false,
+            "legend": "",
+            "name": "A",
+            "query": ""
+          }
+        ],
+        "queryType": "builder",
+        "unit": ""
+      },
+      "selectedLogFields": [],
+      "selectedTracesFields": [],
+      "softMax": null,
+      "softMin": null,
+      "stackedBarChart": false,
+      "thresholds": [
+        {
+          "index": "co2-level-2",
+          "thresholdValue": 700,
+          "thresholdFormat": "Text",
+          "thresholdOperator": ">",
+          "thresholdColor": "#1e88e5",
+          "thresholdUnit": "ppm",
+          "thresholdLabel": "良：700 ppm"
+        },
+        {
+          "index": "co2-level-3",
+          "thresholdValue": 1000,
+          "thresholdFormat": "Text",
+          "thresholdOperator": ">",
+          "thresholdColor": "#f9ab00",
+          "thresholdUnit": "ppm",
+          "thresholdLabel": "轻度污染：1000 ppm"
+        },
+        {
+          "index": "co2-level-4",
+          "thresholdValue": 1500,
+          "thresholdFormat": "Text",
+          "thresholdOperator": ">",
+          "thresholdColor": "#fb8c00",
+          "thresholdUnit": "ppm",
+          "thresholdLabel": "中度污染：1500 ppm"
+        },
+        {
+          "index": "co2-level-5",
+          "thresholdValue": 2000,
+          "thresholdFormat": "Text",
+          "thresholdOperator": ">",
+          "thresholdColor": "#e53935",
+          "thresholdUnit": "ppm",
+          "thresholdLabel": "重度污染：2000 ppm"
+        }
+      ],
+      "timePreferance": "GLOBAL_TIME",
+      "title": "CO2 趋势（ppm）",
+      "yAxisUnit": "ppm"
+    },
+    {
+      "bucketCount": 30,
+      "bucketWidth": 0,
+      "columnUnits": {},
+      "description": "甲醛浓度随时间变化。",
+      "fillMode": "none",
+      "fillSpans": false,
+      "id": "env2metric-hcho-trend",
+      "isLogScale": false,
+      "legendPosition": "bottom",
+      "lineInterpolation": "spline",
+      "lineStyle": "solid",
+      "mergeAllActiveQueries": false,
+      "nullZeroValues": "zero",
+      "opacity": "1",
+      "panelTypes": "graph",
+      "query": {
+        "builder": {
+          "queryData": [
+            {
+              "aggregations": [
+                {
+                  "metricName": "env2metric.air.hcho",
+                  "reduceTo": "avg",
+                  "spaceAggregation": "avg",
+                  "temporality": "",
+                  "timeAggregation": "avg"
+                }
+              ],
+              "dataSource": "metrics",
+              "disabled": false,
+              "expression": "A",
+              "filter": {
+                "expression": ""
+              },
+              "filters": {
+                "items": [],
+                "op": "AND"
+              },
+              "functions": [],
+              "groupBy": [],
+              "having": {
+                "expression": ""
+              },
+              "legend": "甲醛",
+              "limit": null,
+              "orderBy": [],
+              "queryName": "A",
+              "source": "",
+              "stepInterval": 60
+            }
+          ],
+          "queryFormulas": [],
+          "queryTraceOperator": []
+        },
+        "clickhouse_sql": [
+          {
+            "disabled": false,
+            "legend": "",
+            "name": "A",
+            "query": ""
+          }
+        ],
+        "id": "env2metric-hcho-trend-query",
+        "promql": [
+          {
+            "disabled": false,
+            "legend": "",
+            "name": "A",
+            "query": ""
+          }
+        ],
+        "queryType": "builder",
+        "unit": ""
+      },
+      "selectedLogFields": [],
+      "selectedTracesFields": [],
+      "softMax": null,
+      "softMin": null,
+      "stackedBarChart": false,
+      "thresholds": [
+        {
+          "index": "hcho-level-2",
+          "thresholdValue": 80,
+          "thresholdFormat": "Text",
+          "thresholdOperator": ">",
+          "thresholdColor": "#1e88e5",
+          "thresholdUnit": "µg/m³",
+          "thresholdLabel": "良：80 µg/m³"
+        },
+        {
+          "index": "hcho-level-3",
+          "thresholdValue": 120,
+          "thresholdFormat": "Text",
+          "thresholdOperator": ">",
+          "thresholdColor": "#f9ab00",
+          "thresholdUnit": "µg/m³",
+          "thresholdLabel": "轻度污染：120 µg/m³"
+        },
+        {
+          "index": "hcho-level-4",
+          "thresholdValue": 200,
+          "thresholdFormat": "Text",
+          "thresholdOperator": ">",
+          "thresholdColor": "#fb8c00",
+          "thresholdUnit": "µg/m³",
+          "thresholdLabel": "中度污染：200 µg/m³"
+        },
+        {
+          "index": "hcho-level-5",
+          "thresholdValue": 400,
+          "thresholdFormat": "Text",
+          "thresholdOperator": ">",
+          "thresholdColor": "#e53935",
+          "thresholdUnit": "µg/m³",
+          "thresholdLabel": "重度污染：400 µg/m³"
+        }
+      ],
+      "timePreferance": "GLOBAL_TIME",
+      "title": "甲醛趋势（µg/m³）",
+      "yAxisUnit": "µg/m³"
+    },
+    {
+      "bucketCount": 30,
+      "bucketWidth": 0,
+      "columnUnits": {},
+      "description": "VOC 浓度随时间变化。",
+      "fillMode": "none",
+      "fillSpans": false,
+      "id": "env2metric-voc-trend",
+      "isLogScale": false,
+      "legendPosition": "bottom",
+      "lineInterpolation": "spline",
+      "lineStyle": "solid",
+      "mergeAllActiveQueries": false,
+      "nullZeroValues": "zero",
+      "opacity": "1",
+      "panelTypes": "graph",
+      "query": {
+        "builder": {
+          "queryData": [
+            {
+              "aggregations": [
+                {
+                  "metricName": "env2metric.air.voc",
+                  "reduceTo": "avg",
+                  "spaceAggregation": "avg",
+                  "temporality": "",
+                  "timeAggregation": "avg"
+                }
+              ],
+              "dataSource": "metrics",
+              "disabled": false,
+              "expression": "A",
+              "filter": {
+                "expression": ""
+              },
+              "filters": {
+                "items": [],
+                "op": "AND"
+              },
+              "functions": [],
+              "groupBy": [],
+              "having": {
+                "expression": ""
+              },
+              "legend": "VOC",
+              "limit": null,
+              "orderBy": [],
+              "queryName": "A",
+              "source": "",
+              "stepInterval": 60
+            }
+          ],
+          "queryFormulas": [],
+          "queryTraceOperator": []
+        },
+        "clickhouse_sql": [
+          {
+            "disabled": false,
+            "legend": "",
+            "name": "A",
+            "query": ""
+          }
+        ],
+        "id": "env2metric-voc-trend-query",
+        "promql": [
+          {
+            "disabled": false,
+            "legend": "",
+            "name": "A",
+            "query": ""
+          }
+        ],
+        "queryType": "builder",
+        "unit": ""
+      },
+      "selectedLogFields": [],
+      "selectedTracesFields": [],
+      "softMax": null,
+      "softMin": null,
+      "stackedBarChart": false,
+      "thresholds": [
+        {
+          "index": "voc-level-2",
+          "thresholdValue": 0.22,
+          "thresholdFormat": "Text",
+          "thresholdOperator": ">",
+          "thresholdColor": "#1e88e5",
+          "thresholdUnit": "ppm",
+          "thresholdLabel": "良：0.22 ppm"
+        },
+        {
+          "index": "voc-level-3",
+          "thresholdValue": 0.44,
+          "thresholdFormat": "Text",
+          "thresholdOperator": ">",
+          "thresholdColor": "#f9ab00",
+          "thresholdUnit": "ppm",
+          "thresholdLabel": "轻度污染：0.44 ppm"
+        },
+        {
+          "index": "voc-level-4",
+          "thresholdValue": 0.88,
+          "thresholdFormat": "Text",
+          "thresholdOperator": ">",
+          "thresholdColor": "#fb8c00",
+          "thresholdUnit": "ppm",
+          "thresholdLabel": "中度污染：0.88 ppm"
+        },
+        {
+          "index": "voc-level-5",
+          "thresholdValue": 1.76,
+          "thresholdFormat": "Text",
+          "thresholdOperator": ">",
+          "thresholdColor": "#e53935",
+          "thresholdUnit": "ppm",
+          "thresholdLabel": "重度污染：1.76 ppm"
+        }
+      ],
+      "timePreferance": "GLOBAL_TIME",
+      "title": "VOC 趋势（ppm）",
+      "yAxisUnit": "ppm"
+    },
+    {
+      "bucketCount": 30,
+      "bucketWidth": 0,
+      "columnUnits": {},
+      "description": "温度随时间变化。",
+      "fillMode": "none",
+      "fillSpans": false,
+      "id": "env2metric-temperature-trend",
+      "isLogScale": false,
+      "legendPosition": "bottom",
+      "lineInterpolation": "spline",
+      "lineStyle": "solid",
+      "mergeAllActiveQueries": false,
+      "nullZeroValues": "zero",
+      "opacity": "1",
+      "panelTypes": "graph",
+      "query": {
+        "builder": {
+          "queryData": [
+            {
+              "aggregations": [
+                {
+                  "metricName": "env2metric.air.temperature",
+                  "reduceTo": "avg",
+                  "spaceAggregation": "avg",
+                  "temporality": "",
+                  "timeAggregation": "avg"
+                }
+              ],
+              "dataSource": "metrics",
+              "disabled": false,
+              "expression": "A",
+              "filter": {
+                "expression": ""
+              },
+              "filters": {
+                "items": [],
+                "op": "AND"
+              },
+              "functions": [],
+              "groupBy": [],
+              "having": {
+                "expression": ""
+              },
+              "legend": "温度",
+              "limit": null,
+              "orderBy": [],
+              "queryName": "A",
+              "source": "",
+              "stepInterval": 60
+            }
+          ],
+          "queryFormulas": [],
+          "queryTraceOperator": []
+        },
+        "clickhouse_sql": [
+          {
+            "disabled": false,
+            "legend": "",
+            "name": "A",
+            "query": ""
+          }
+        ],
+        "id": "env2metric-temperature-trend-query",
+        "promql": [
+          {
+            "disabled": false,
+            "legend": "",
+            "name": "A",
+            "query": ""
+          }
+        ],
+        "queryType": "builder",
+        "unit": ""
+      },
+      "selectedLogFields": [],
+      "selectedTracesFields": [],
+      "softMax": null,
+      "softMin": null,
+      "stackedBarChart": false,
+      "thresholds": [
+        {
+          "index": "temperature-low",
+          "thresholdValue": 18,
+          "thresholdFormat": "Text",
+          "thresholdOperator": "<",
+          "thresholdColor": "#1e88e5",
+          "thresholdUnit": "°C",
+          "thresholdLabel": "舒适下限 18 ℃"
+        },
+        {
+          "index": "temperature-high",
+          "thresholdValue": 25.5,
+          "thresholdFormat": "Text",
+          "thresholdOperator": ">",
+          "thresholdColor": "#f9ab00",
+          "thresholdUnit": "°C",
+          "thresholdLabel": "舒适上限 25.5 ℃"
+        }
+      ],
+      "timePreferance": "GLOBAL_TIME",
+      "title": "温度趋势（℃）",
+      "yAxisUnit": "°C"
+    },
+    {
+      "bucketCount": 30,
+      "bucketWidth": 0,
+      "columnUnits": {},
+      "description": "相对湿度随时间变化。",
+      "fillMode": "none",
+      "fillSpans": false,
+      "id": "env2metric-humidity-trend",
+      "isLogScale": false,
+      "legendPosition": "bottom",
+      "lineInterpolation": "spline",
+      "lineStyle": "solid",
+      "mergeAllActiveQueries": false,
+      "nullZeroValues": "zero",
+      "opacity": "1",
+      "panelTypes": "graph",
+      "query": {
+        "builder": {
+          "queryData": [
+            {
+              "aggregations": [
+                {
+                  "metricName": "env2metric.air.humidity",
+                  "reduceTo": "avg",
+                  "spaceAggregation": "avg",
+                  "temporality": "",
+                  "timeAggregation": "avg"
+                }
+              ],
+              "dataSource": "metrics",
+              "disabled": false,
+              "expression": "A",
+              "filter": {
+                "expression": ""
+              },
+              "filters": {
+                "items": [],
+                "op": "AND"
+              },
+              "functions": [],
+              "groupBy": [],
+              "having": {
+                "expression": ""
+              },
+              "legend": "湿度",
+              "limit": null,
+              "orderBy": [],
+              "queryName": "A",
+              "source": "",
+              "stepInterval": 60
+            }
+          ],
+          "queryFormulas": [],
+          "queryTraceOperator": []
+        },
+        "clickhouse_sql": [
+          {
+            "disabled": false,
+            "legend": "",
+            "name": "A",
+            "query": ""
+          }
+        ],
+        "id": "env2metric-humidity-trend-query",
+        "promql": [
+          {
+            "disabled": false,
+            "legend": "",
+            "name": "A",
+            "query": ""
+          }
+        ],
+        "queryType": "builder",
+        "unit": ""
+      },
+      "selectedLogFields": [],
+      "selectedTracesFields": [],
+      "softMax": null,
+      "softMin": null,
+      "stackedBarChart": false,
+      "thresholds": [
+        {
+          "index": "humidity-low",
+          "thresholdValue": 40,
+          "thresholdFormat": "Text",
+          "thresholdOperator": "<",
+          "thresholdColor": "#1e88e5",
+          "thresholdUnit": "%",
+          "thresholdLabel": "舒适下限 40 %"
+        },
+        {
+          "index": "humidity-high",
+          "thresholdValue": 60,
+          "thresholdFormat": "Text",
+          "thresholdOperator": ">",
+          "thresholdColor": "#f9ab00",
+          "thresholdUnit": "%",
+          "thresholdLabel": "舒适上限 60 %"
+        }
+      ],
+      "timePreferance": "GLOBAL_TIME",
+      "title": "湿度趋势（%）",
+      "yAxisUnit": "%"
+    },
+    {
+      "bucketCount": 30,
+      "bucketWidth": 0,
+      "columnUnits": {},
+      "description": "大于 0.3 微米颗粒数随时间变化。",
+      "fillMode": "none",
+      "fillSpans": false,
+      "id": "env2metric-particle-trend",
+      "isLogScale": false,
+      "legendPosition": "bottom",
+      "lineInterpolation": "spline",
+      "lineStyle": "solid",
+      "mergeAllActiveQueries": false,
+      "nullZeroValues": "zero",
+      "opacity": "1",
+      "panelTypes": "graph",
+      "query": {
+        "builder": {
+          "queryData": [
+            {
+              "aggregations": [
+                {
+                  "metricName": "env2metric.air.particle_0_3um",
+                  "reduceTo": "avg",
+                  "spaceAggregation": "avg",
+                  "temporality": "",
+                  "timeAggregation": "avg"
+                }
+              ],
+              "dataSource": "metrics",
+              "disabled": false,
+              "expression": "A",
+              "filter": {
+                "expression": ""
+              },
+              "filters": {
+                "items": [],
+                "op": "AND"
+              },
+              "functions": [],
+              "groupBy": [],
+              "having": {
+                "expression": ""
+              },
+              "legend": "0.3um 颗粒数",
+              "limit": null,
+              "orderBy": [],
+              "queryName": "A",
+              "source": "",
+              "stepInterval": 60
+            }
+          ],
+          "queryFormulas": [],
+          "queryTraceOperator": []
+        },
+        "clickhouse_sql": [
+          {
+            "disabled": false,
+            "legend": "",
+            "name": "A",
+            "query": ""
+          }
+        ],
+        "id": "env2metric-particle-trend-query",
+        "promql": [
+          {
+            "disabled": false,
+            "legend": "",
+            "name": "A",
+            "query": ""
+          }
+        ],
+        "queryType": "builder",
+        "unit": ""
+      },
+      "selectedLogFields": [],
+      "selectedTracesFields": [],
+      "softMax": null,
+      "softMin": null,
+      "stackedBarChart": false,
+      "thresholds": [],
+      "timePreferance": "GLOBAL_TIME",
+      "title": "0.3um 颗粒数趋势（pcs/0.1L）",
+      "yAxisUnit": "pcs/0.1L"
+    }
+  ]
+}

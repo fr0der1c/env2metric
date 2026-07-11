@@ -1,0 +1,49 @@
+menu "env2metric"
+
+config ENV2METRIC_WIFI_SSID
+    string "Wi-Fi SSID"
+    default ""
+    help
+        SSID used by the ESP32-S3 firmware in station mode.
+
+config ENV2METRIC_WIFI_PASSWORD
+    string "Wi-Fi password"
+    default ""
+    help
+        Password used by the ESP32-S3 firmware in station mode.
+        Leave empty only for open networks.
+
+config ENV2METRIC_OTLP_METRICS_URL
+    string "OTLP metrics URL"
+    default "http://signoz.local:4318/v1/metrics"
+    help
+        OTLP/HTTP metrics endpoint.
+
+config ENV2METRIC_OTLP_HTTP_TIMEOUT_MS
+    int "OTLP HTTP timeout in milliseconds"
+    default 5000
+    range 1000 60000
+    help
+        Timeout used when sending metrics to the OTLP endpoint.
+
+config ENV2METRIC_SENSOR_BAUD_RATE
+    int "Sensor CDC serial baud rate"
+    default 57600
+    range 9600 115200
+    help
+        Baud rate used when configuring the air quality monitor CDC serial line.
+
+config ENV2METRIC_SNTP_SERVER
+    string "SNTP server"
+    default "pool.ntp.org"
+    help
+        NTP server used to synchronize system time before exporting OTLP metrics.
+
+config ENV2METRIC_SNTP_TIMEOUT_MS
+    int "SNTP sync timeout in milliseconds"
+    default 15000
+    range 1000 60000
+    help
+        Maximum time to wait for system time synchronization after Wi-Fi connects.
+
+endmenu
