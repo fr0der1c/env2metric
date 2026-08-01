@@ -13,7 +13,7 @@ namespace {
 
 constexpr char kTag[] = "env2metric_led_ctl";
 constexpr std::uint32_t kFastBlinkDelayMs = 200;
-constexpr TickType_t kPulseDelay = pdMS_TO_TICKS(1000);
+constexpr TickType_t kPulseDelay = pdMS_TO_TICKS(500);
 
 constexpr RgbColor kWifiWaiting{0, 0, 16};
 constexpr RgbColor kSensorWaiting{16, 16, 0};

@@ -51,8 +51,9 @@ project_id = sys.argv[1]
 dashboard_name = sys.argv[2]
 
 
-def metric_query(metric_name, aggregation="Avg"):
-    return {
+def metric_query(metric_name, aggregation="Avg", warning_threshold=None,
+                 critical_threshold=None):
+    query = {
         "metricQueryData": {
             "filterData": {
                 "metricName": metric_name,
@@ -61,14 +62,19 @@ def metric_query(metric_name, aggregation="Avg"):
             "groupBy": None,
         },
     }
+    if warning_threshold is not None:
+        query["warningThreshold"] = warning_threshold
+    if critical_threshold is not None:
+        query["criticalThreshold"] = critical_threshold
+    return query
 
 
-def value(title, metric_name, left):
+def value(title, metric_name, left, top):
     return {
         "_type": "DashboardComponent",
         "componentId": str(uuid.uuid4()),
         "componentType": "Value",
-        "topInDashboardUnits": 0,
+        "topInDashboardUnits": top,
         "leftInDashboardUnits": left,
         "widthInDashboardUnits": 2,
         "heightInDashboardUnits": 1,
@@ -81,7 +87,8 @@ def value(title, metric_name, left):
     }
 
 
-def chart(title, metric_name, left, top):
+def chart(title, metric_name, left, top, warning_threshold=None,
+          critical_threshold=None):
     return {
         "_type": "DashboardComponent",
         "componentId": str(uuid.uuid4()),
@@ -97,26 +104,33 @@ def chart(title, metric_name, left, top):
             "chartType": "Line",
             "metricQueryConfig": {
                 "metricAliasData": {"metricVariable": "a"},
-                **metric_query(metric_name, "Avg"),
+                **metric_query(metric_name, "Avg", warning_threshold,
+                               critical_threshold),
             },
         },
     }
 
 
 components = [
-    value("PM2.5 (µg/m³)", "env2metric.air.pm25", 0),
-    value("CO₂ (ppm)", "env2metric.air.co2", 2),
-    value("甲醛 (µg/m³)", "env2metric.air.hcho", 4),
-    value("VOC (ppm)", "env2metric.air.voc", 6),
-    value("温度 (°C)", "env2metric.air.temperature", 8),
-    value("湿度 (%)", "env2metric.air.humidity", 10),
-    chart("PM2.5 趋势", "env2metric.air.pm25", 0, 2),
-    chart("温度趋势", "env2metric.air.temperature", 6, 2),
-    chart("湿度趋势", "env2metric.air.humidity", 0, 6),
-    chart("甲醛趋势", "env2metric.air.hcho", 6, 6),
-    chart("CO₂ 趋势", "env2metric.air.co2", 0, 10),
-    chart("VOC 趋势", "env2metric.air.voc", 6, 10),
-    chart("0.3um 颗粒数趋势", "env2metric.air.particle_0_3um", 0, 14),
+    value("温度 (°C)", "env2metric.air.temperature", 0, 0),
+    value("湿度 (%)", "env2metric.air.humidity", 2, 0),
+    value("PM2.5 (µg/m³)", "env2metric.air.pm25", 4, 0),
+    value("甲醛 (µg/m³)", "env2metric.air.hcho", 6, 0),
+    value("CO₂ (ppm)", "env2metric.air.co2", 8, 0),
+    value("VOC (ppm)", "env2metric.air.voc", 10, 0),
+    chart("PM2.5 趋势", "env2metric.air.pm25", 0, 1,
+          critical_threshold=50),
+    chart("温度趋势", "env2metric.air.temperature", 6, 1,
+          warning_threshold=25.5),
+    chart("湿度趋势", "env2metric.air.humidity", 0, 5,
+          warning_threshold=60),
+    chart("甲醛趋势", "env2metric.air.hcho", 6, 5,
+          warning_threshold=120, critical_threshold=400),
+    chart("CO₂ 趋势", "env2metric.air.co2", 0, 9,
+          warning_threshold=1000, critical_threshold=2000),
+    chart("VOC 趋势", "env2metric.air.voc", 6, 9,
+          warning_threshold=0.44, critical_threshold=1.76),
+    chart("0.3um 颗粒数趋势", "env2metric.air.particle_0_3um", 0, 13),
 ]
 
 data = {
@@ -125,7 +139,7 @@ data = {
         "projectId": project_id,
         "dashboardViewConfig": {
             "_type": "DashboardViewConfig",
-            "heightInDashboardUnits": 18,
+            "heightInDashboardUnits": 17,
             "refreshInterval": "1m",
             "components": components,
         },
