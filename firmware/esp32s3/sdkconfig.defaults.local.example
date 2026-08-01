@@ -1,3 +1,4 @@
 CONFIG_ENV2METRIC_WIFI_SSID="your-wifi-name"
 CONFIG_ENV2METRIC_WIFI_PASSWORD="your-wifi-password"
-CONFIG_ENV2METRIC_OTLP_METRICS_URL="http://your-signoz-host:4318/v1/metrics"
+CONFIG_ENV2METRIC_OTLP_METRICS_URL="https://your-oneuptime-host/otlp/v1/metrics"
+CONFIG_ENV2METRIC_OTLP_HEADERS="x-oneuptime-token=your-oneuptime-telemetry-ingestion-key"

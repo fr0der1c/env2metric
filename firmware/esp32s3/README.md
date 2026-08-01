@@ -1,6 +1,6 @@
 # env2metric ESP32-S3 Firmware
 
-这是 YN038 ESP32-S3 开发板上的正式采集固件。固件通过 USB Host 读取空气质量检测仪的 CDC-ACM 串口数据，解析成空气质量指标，并通过 OTLP HTTP 上报到 SigNoz。
+这是 YN038 ESP32-S3 开发板上的正式采集固件。固件通过 USB Host 读取空气质量检测仪的 CDC-ACM 串口数据，解析成空气质量指标，并通过 OTLP HTTP 上报到 OneUptime。
 
 ## 当前行为
 
@@ -15,7 +15,7 @@
 
 ## 指标
 
-固件和 SigNoz 看板使用以下指标名：
+固件和 OneUptime 看板使用以下指标名：
 
 ```text
 env2metric.air.particle_0_3um
@@ -54,31 +54,33 @@ CONFIG_ENV2METRIC_WIFI_PASSWORD="your-password"
 
 `sdkconfig.defaults.local` 和生成的 `sdkconfig` 会包含本地 Wi-Fi 密码，已经加入 `.gitignore`，不要提交到 Git。
 
-OTLP 地址通过项目配置项设置。示例：
+OTLP 地址和可选请求头通过项目配置项设置。请求头使用与 `OTEL_EXPORTER_OTLP_HEADERS` 一致的 `名称=值` 格式，多个 Header 用逗号分隔。OneUptime 使用 Telemetry Ingestion Key：
 
 ```text
-http://<host>:4318/v1/metrics
+https://<host>/otlp/v1/metrics
+x-oneuptime-token=<Telemetry Ingestion Key>
 ```
 
 相关配置项：
 
 ```text
 CONFIG_ENV2METRIC_OTLP_METRICS_URL
+CONFIG_ENV2METRIC_OTLP_HEADERS
 CONFIG_ENV2METRIC_OTLP_HTTP_TIMEOUT_MS
-CONFIG_ENV2METRIC_NTP_SERVER
+CONFIG_ENV2METRIC_SNTP_SERVER
 ```
 
 ## LED 灯语
 
 - Wi-Fi 未连接或正在重连：蓝色快闪，亮 200ms / 灭 200ms
 - 检测仪未连接或正在等待 USB 检测仪：黄色快闪，亮 200ms / 灭 200ms
-- 读到有效样本并开始 OTLP 上报：白色，保持 1 秒
-- OTLP 上报成功：白色，保持 1 秒
-- OTLP 上报失败：橙色，保持 1 秒
-- 样本解析或校验失败：黄色，保持 1 秒
+- 读到有效样本并开始 OTLP 上报：白色，保持 0.5 秒
+- OTLP 上报成功：白色，保持 0.5 秒
+- OTLP 上报失败：橙色，保持 0.5 秒
+- 样本解析或校验失败：黄色，保持 0.5 秒
 - Wi-Fi 配置缺失、Wi-Fi 初始化失败等启动致命错误：红色常亮
 
-成功上报路径会先显示 1 秒白灯表示开始上报，再显示 1 秒白灯表示成功，因此肉眼看到的是约 2 秒白灯。
+成功上报路径会先显示 0.5 秒白灯表示开始上报，再显示 0.5 秒白灯表示成功，因此肉眼看到的是约 1 秒白灯。
 
 ## 构建环境
 

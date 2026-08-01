@@ -16,6 +16,7 @@ idf_component_register(
         esp_driver_gpio
         esp_event
         esp_http_client
+        mbedtls
         esp_netif
         esp_wifi
         espressif__led_strip

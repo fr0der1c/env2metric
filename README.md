@@ -1,6 +1,6 @@
 # env2metric
 
-`env2metric` 把正和清源空气质量检测仪B39变成一台可以长期运行的网络传感器：ESP32-S3 开发板通过 USB 读取检测仪数据，再使用 OpenTelemetry OTLP/HTTP 上传到 SigNoz。
+`env2metric` 把正和清源空气质量检测仪B39变成一台可以长期运行的网络传感器：ESP32-S3 开发板通过 USB 读取检测仪数据，再使用 OpenTelemetry OTLP/HTTP 上传到 OneUptime。
 
 运行后可以在 Dashboard 中查看 PM2.5、CO2、甲醛、VOC、温度和湿度的当前值、历史趋势及空气质量参考线。
 
@@ -16,7 +16,7 @@
 还需要：
 
 - 一个 2.4 GHz Wi-Fi 网络
-- 一套可从该 Wi-Fi 访问的 SigNoz
+- 一套可从该 Wi-Fi 访问的 OneUptime
 - 一台用于编译和刷机的 macOS 或 Linux 电脑
 
 ## 连接设备
@@ -47,7 +47,7 @@ cd esp-idf
 . "$HOME/esp/esp-idf/export.sh"
 ```
 
-### 2. 配置 Wi-Fi 和 SigNoz
+### 2. 配置 Wi-Fi 和 OneUptime
 
 回到 env2metric 仓库根目录，创建只在本机使用的配置文件：
 
@@ -61,10 +61,13 @@ cp firmware/esp32s3/sdkconfig.defaults.local.example \
 ```text
 CONFIG_ENV2METRIC_WIFI_SSID="your-wifi-name"
 CONFIG_ENV2METRIC_WIFI_PASSWORD="your-wifi-password"
-CONFIG_ENV2METRIC_OTLP_METRICS_URL="http://your-signoz-host:4318/v1/metrics"
+CONFIG_ENV2METRIC_OTLP_METRICS_URL="https://your-oneuptime-host/otlp/v1/metrics"
+CONFIG_ENV2METRIC_OTLP_HEADERS="x-oneuptime-token=your-oneuptime-telemetry-ingestion-key"
 ```
 
-该文件包含 Wi-Fi 密码，已经被 Git 忽略，不要提交它。
+`CONFIG_ENV2METRIC_OTLP_HEADERS` 与 `OTEL_EXPORTER_OTLP_HEADERS` 使用相同的 `名称=值` 格式，支持用逗号分隔多个 Header。OneUptime 的 Telemetry Ingestion Key 应填写为 `x-oneuptime-token=<key>`；本地 SigNoz 不需要鉴权时可留空。该文件包含 Wi-Fi 密码和遥测密钥，已经被 Git 忽略，不要提交它。
+
+自托管 OneUptime 时，地址通常是 `https://your-oneuptime-host/otlp/v1/metrics`。请让 ESP32 信任该 HTTPS 证书；如暂时使用内网 HTTP，应使用对应的 `http://` 地址。
 
 ### 3. 编译固件
 
@@ -85,7 +88,7 @@ IDF_COMPONENT_MANAGER=0 idf.py -C firmware/esp32s3 \
 
 ### 5. 查看数据
 
-启动成功后，固件会依次连接 Wi-Fi、同步时间、等待检测仪数据并上传指标。SigNoz 中出现 `env2metric.air.*` 指标，就表示整条链路已经跑通。
+启动成功后，固件会依次连接 Wi-Fi、同步时间、等待检测仪数据并上传指标。OneUptime 的 Metrics 中出现 `env2metric.air.*` 指标，就表示整条链路已经跑通。
 
 服务端暂时不可用不会导致设备卡死或程序退出。一次数据上传失败后，固件会继续读取并上报后续数据。
 
@@ -100,19 +103,15 @@ IDF_COMPONENT_MANAGER=0 idf.py -C firmware/esp32s3 \
 | 黄色 1 秒 | 本次数据解析或校验失败 |
 | 红色常亮 | 启动发生致命错误 |
 
-## 创建 SigNoz Dashboard
+## 创建 OneUptime Dashboard
 
-仓库提供了中文 Dashboard 模板，包含六个当前值面板、独立量纲趋势图和空气质量参考线。
+脚本会创建一个包含六个当前值面板和七个趋势图的 OneUptime Dashboard。它使用 OneUptime API Key，区别于设备上报所用的 Telemetry Ingestion Key。
 
 ```bash
-export SIGNOZ_BASE_URL=http://your-signoz-host:8080
-export SIGNOZ_TOKEN=<SigNoz AUTH_TOKEN>
-./scripts/create_signoz_dashboard.sh
+./scripts/create_oneuptime_dashboard.sh
 ```
 
-如果 API 返回 `unauthenticated`，通常是 token 已过期，需要从登录后的 SigNoz 浏览器会话中重新获取 `AUTH_TOKEN`。
-
-Dashboard 模板位于 [dashboards/env2metric-air-quality.json](dashboards/env2metric-air-quality.json)。
+脚本会依次询问 OneUptime 地址、API Key 和 Project ID；API Key 输入时不会回显。也可预先设置同名的 `ONEUPTIME_BASE_URL`、`ONEUPTIME_API_KEY`、`ONEUPTIME_PROJECT_ID` 环境变量，适合自动化运行。同一项目中已有同名 Dashboard 时，脚本会先删除它再创建，API Key 因而需要 Dashboard 的创建与删除权限。
 
 ## 采集指标
 
@@ -152,8 +151,8 @@ PM2.5 当前标注的参考限值为 `50 µg/m³`。温度舒适区间为 `18-25
 ```text
 env2metric/
   firmware/esp32s3/  # YN038 ESP32-S3 固件
-  dashboards/        # SigNoz Dashboard 模板
-  scripts/           # Dashboard 创建脚本
+  dashboards/        # SigNoz Dashboard 模板（保留供旧部署使用）
+  scripts/           # SigNoz 和 OneUptime Dashboard 创建脚本
 ```
 
 设备协议参数、固件配置和开发说明见 [firmware/esp32s3/README.md](firmware/esp32s3/README.md)。

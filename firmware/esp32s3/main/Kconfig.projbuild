@@ -19,6 +19,13 @@ config ENV2METRIC_OTLP_METRICS_URL
     help
         OTLP/HTTP metrics endpoint.
 
+config ENV2METRIC_OTLP_HEADERS
+    string "OTLP HTTP headers"
+    default ""
+    help
+        Optional comma-separated HTTP headers in name=value format.
+        Example: x-oneuptime-token=your-telemetry-ingestion-key
+
 config ENV2METRIC_OTLP_HTTP_TIMEOUT_MS
     int "OTLP HTTP timeout in milliseconds"
     default 5000
