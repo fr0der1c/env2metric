@@ -12,6 +12,7 @@
 - 解析检测仪 CSV 数据并执行范围校验
 - 通过 OTLP HTTP 上报真实空气质量指标
 - 上报失败只记录 warning 并继续采集，不重启固件
+- USB 断开后清空残留半行和序号记录，重连后允许检测仪序号重新开始
 
 ## 指标
 
@@ -103,6 +104,18 @@ export IDF_TOOLS_PATH="$ENV2METRIC_WORKSPACE/.espressif"
 
 ```bash
 IDF_COMPONENT_MANAGER=0 idf.py -C firmware/esp32s3 build
+```
+
+## 序号校验回归测试
+
+从 Git 仓库根目录运行，验证重连后接受小序号，同时保留连接内的递增校验和样本范围校验：
+
+```bash
+c++ -std=c++17 -Wall -Wextra -Werror -I firmware/esp32s3/main \
+  firmware/esp32s3/main/air_quality_validator.cpp \
+  firmware/esp32s3/tests/air_quality_validator_test.cpp \
+  -o /tmp/env2metric-air-quality-validator-test
+/tmp/env2metric-air-quality-validator-test
 ```
 
 ## 烧录和日志

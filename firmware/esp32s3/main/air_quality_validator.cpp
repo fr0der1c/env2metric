@@ -1,5 +1,6 @@
 #include "air_quality_validator.hpp"
 
+// 校验样本范围，并要求当前 USB 连接内的序号严格递增。
 bool AirQualityValidator::validate(const AirQualitySample& sample,
                                    std::string& error)
 {
@@ -43,4 +44,10 @@ bool AirQualityValidator::validate(const AirQualitySample& sample,
     has_last_sequence_ = true;
     last_sequence_ = sample.sequence;
     return true;
+}
+
+void AirQualityValidator::reset()
+{
+    has_last_sequence_ = false;
+    last_sequence_ = 0;
 }

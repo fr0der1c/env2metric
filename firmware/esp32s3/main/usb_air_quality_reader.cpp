@@ -72,6 +72,11 @@ class LineAssembler {
 public:
     explicit LineAssembler(QueueHandle_t line_queue) : line_queue_(line_queue) {}
 
+    void reset()
+    {
+        length_ = 0;
+    }
+
     void append(const std::uint8_t* data, std::size_t size)
     {
         for (std::size_t index = 0; index < size; ++index) {
@@ -272,6 +277,7 @@ void drain_stale_lines(QueueHandle_t queue)
 
 } // namespace
 
+// 持续采集检测仪数据，USB 断开后清空连接状态并重新打开设备。
 void run_usb_air_quality_collector()
 {
     QueueHandle_t line_queue =
@@ -331,6 +337,10 @@ void run_usb_air_quality_collector()
         }
 
         ESP_LOGW(kTag, "USB device disconnected, reopening after delay");
+        // 先关闭旧设备，停止接收回调，再清空旧连接的样本状态。
+        device.reset();
+        assembler.reset();
+        validator.reset();
         vTaskDelay(kOpenRetryDelay);
     }
 }

@@ -8,6 +8,7 @@
 class AirQualityValidator {
 public:
     bool validate(const AirQualitySample& sample, std::string& error);
+    void reset();
 
 private:
     bool has_last_sequence_ = false;
