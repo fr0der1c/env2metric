@@ -1,8 +1,24 @@
 # env2metric
 
-`env2metric` 把正和清源空气质量检测仪B39变成一台可以长期运行的网络传感器：ESP32-S3 开发板通过 USB 读取检测仪数据，再使用 OpenTelemetry OTLP/HTTP 上传到 OneUptime。
+`env2metric` 把正和清源空气质量检测仪B39变成一台可以长期运行的网络传感器：ESP32-S3 开发板通过 USB 读取检测仪数据，再通过 OpenTelemetry 的 OTLP/HTTP 协议将空气质量指标上报到兼容的可观测平台，当前以 OneUptime 为主要接入示例。
 
-运行后可以在 Dashboard 中查看 PM2.5、CO2、甲醛、VOC、温度和湿度的当前值、历史趋势及空气质量参考线。
+在可观测平台配置 Dashboard 后，可以查看 PM2.5、CO2、甲醛、VOC、温度和湿度的当前值、历史趋势及空气质量参考线。
+
+## 接入可观测平台
+
+### OneUptime（主要接入示例）
+
+[OneUptime](https://oneuptime.com/) 是一个开源的监控与可观测性平台，支持指标、日志、链路追踪、告警和事件管理，可以自行部署，也可以使用官方托管服务。部署和使用说明见 [官方文档](https://oneuptime.com/docs/en/introduction/getting-started)。
+
+在本项目中，OneUptime 负责接收和存储 ESP32-S3 通过 OTLP/HTTP 上报的空气质量指标，并通过 Metrics 和 Dashboard 展示当前值与历史趋势。使用前需要准备一个可从设备所在 Wi-Fi 访问的 OneUptime 实例，在其中创建项目并获取 Telemetry Ingestion Key；本仓库还提供创建配套 Dashboard 的脚本。
+
+### 其他兼容平台
+
+固件发送的是 **OTLP/HTTP JSON 格式的指标（Metrics）数据**，通过 HTTP POST 上报，`Content-Type` 为 `application/json`。其他平台提供兼容的指标接收端点时，可以修改 `CONFIG_ENV2METRIC_OTLP_METRICS_URL` 和 `CONFIG_ENV2METRIC_OTLP_HEADERS`，填写其完整接收地址和认证请求头，再重新编译固件。使用 HTTPS 时，设备还需信任接收端的证书。协议细节见 [OTLP/HTTP 规范](https://opentelemetry.io/docs/specs/otlp/#otlphttp)。
+
+如果目标平台仅接受 OTLP/gRPC、OTLP/HTTP 二进制 Protobuf 或其他协议，可以先将指标发送到启用了 OTLP/HTTP 接收端的 [OpenTelemetry Collector](https://opentelemetry.io/docs/collector/)，再配置对应的导出器转发到目标平台。
+
+数据上报兼容不代表看板配置通用。本仓库保留了 OneUptime 和 SigNoz 的看板相关文件，其他平台需要按其查询和展示方式另外配置 Dashboard；具体接入效果仍需在目标平台验证。
 
 ## 准备硬件
 
@@ -10,13 +26,13 @@
 
 - [正和清源空气质量检测仪 B39](https://item.taobao.com/item.htm?id=532126167695)
 - [YN038 ESP32-S3 开发板](https://item.taobao.com/item.htm?id=890396470166)
-- 一根用于连接开发板与电脑的 USB 数据线
-- 检测仪随附的 USB 连接线
+- 一根自行购买的 USB 数据线，用于连接电脑与开发板的 CH340 下载/调试接口
+- 一根自行购买的 USB 数据线，用于连接开发板的 USB Host 接口与空气质量检测仪
 
 还需要：
 
 - 一个 2.4 GHz Wi-Fi 网络
-- 一套可从该 Wi-Fi 访问的 OneUptime
+- 一个可从该 Wi-Fi 访问的指标接收端点：OneUptime、其他兼容平台或 OpenTelemetry Collector
 - 一台用于编译和刷机的 macOS 或 Linux 电脑
 
 ## 连接设备
@@ -47,9 +63,9 @@ cd esp-idf
 . "$HOME/esp/esp-idf/export.sh"
 ```
 
-### 2. 配置 Wi-Fi 和 OneUptime
+### 2. 配置 Wi-Fi 和上报平台
 
-回到 env2metric 仓库根目录，创建只在本机使用的配置文件：
+以下以 OneUptime 为例。回到 env2metric 仓库根目录，创建只在本机使用的配置文件：
 
 ```bash
 cp firmware/esp32s3/sdkconfig.defaults.local.example \
@@ -81,7 +97,7 @@ idf.py -C firmware/esp32s3 build
 
 `set-target` 仅在首次构建或切换芯片时执行；后续修改代码后直接运行 `build`。
 
-GitHub Actions 会在推送代码、提交 PR 或手动触发时运行序号校验回归测试，并使用 ESP-IDF v5.5.4 和示例配置编译 ESP32-S3 固件，同时检查依赖锁文件是否发生变化。结果可在仓库的 Actions 页面查看，工作流见 [.github/workflows/firmware.yml](.github/workflows/firmware.yml)。构建使用占位凭据，不需要配置 GitHub Secrets；实际使用时仍需填写自己的 Wi-Fi 和 OneUptime 配置并重新编译。
+GitHub Actions 会在推送代码、提交 PR 或手动触发时运行序号校验回归测试，并使用 ESP-IDF v5.5.4 和示例配置编译 ESP32-S3 固件，同时检查依赖锁文件是否发生变化。结果可在仓库的 Actions 页面查看，工作流见 [.github/workflows/firmware.yml](.github/workflows/firmware.yml)。构建使用占位凭据，不需要配置 GitHub Secrets；实际使用时仍需填写自己的 Wi-Fi 和上报平台配置并重新编译。
 
 ### 4. 刷入开发板
 
@@ -96,7 +112,7 @@ idf.py -C firmware/esp32s3 \
 
 ### 5. 查看数据
 
-启动成功后，固件会依次连接 Wi-Fi、同步时间、等待检测仪数据并上传指标。OneUptime 的 Metrics 中出现 `env2metric.air.*` 指标，就表示整条链路已经跑通。
+启动成功后，固件会依次连接 Wi-Fi、同步时间、等待检测仪数据并上传指标。以 OneUptime 为例，Metrics 中出现 `env2metric.air.*` 指标，就表示整条链路已经跑通；其他平台应在对应的指标查询界面确认数据已接收。
 
 服务端暂时不可用不会导致设备卡死或程序退出。一次数据上传失败后，固件会继续读取并上报后续数据。
 
