@@ -191,6 +191,6 @@ env2metric/
 | 原创外壳设计（SCAD、STL、图片）及项目文档 | [CC BY-NC-SA 4.0](LICENSES/CC-BY-NC-SA-4.0.txt) |
 | 第三方组件 | 保留各自的许可证及版权声明 |
 
-外壳和文档的署名为 `frederic / env2metric`。分享时须保留署名、提供许可证链接并说明修改；分享改编版本时须遵守相同方式共享条款。
+外壳和文档的作者署名为 [frederic (@fr0der1c)](https://github.com/fr0der1c)，项目为 [env2metric](https://github.com/fr0der1c/env2metric)。分享时须保留署名、项目来源和许可证链接，并说明修改；分享改编版本时须遵守相同方式共享条款。
 
 非商业用途不等同于免费提供，具体许可范围以完整条款为准。Espressif USB 组件继续使用其 Apache-2.0 许可证，项目的非商业限制不适用于这些第三方组件本身。完整许可范围见 [LICENSE](LICENSE)。

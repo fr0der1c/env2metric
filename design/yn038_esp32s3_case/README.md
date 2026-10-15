@@ -45,6 +45,6 @@
 
 ## 许可证
 
-本目录的原创 SCAD 源文件、STL 模型、预览图片和文档采用 [CC BY-NC-SA 4.0](../../LICENSES/CC-BY-NC-SA-4.0.txt)，署名为 `frederic / env2metric`。
+本目录的原创 SCAD 源文件、STL 模型、预览图片和文档采用 [CC BY-NC-SA 4.0](../../LICENSES/CC-BY-NC-SA-4.0.txt)，作者署名为 [frederic (@fr0der1c)](https://github.com/fr0der1c)，项目来源为 [env2metric](https://github.com/fr0der1c/env2metric)。
 
-允许在许可证范围内为非商业目的复制、修改和分享。分享时须保留署名、提供许可证链接并说明修改；分享改编版本时须遵守相同方式共享条款。该许可不授权将这些设计用于商业目的。完整许可范围见 [LICENSE](../../LICENSE)。
+允许在许可证范围内为非商业目的复制、修改和分享。分享时须保留署名、项目来源和许可证链接，并说明修改；分享改编版本时须遵守相同方式共享条款。该许可不授权将这些设计用于商业目的。完整许可范围见 [LICENSE](../../LICENSE)。
