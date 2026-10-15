@@ -85,7 +85,9 @@ CONFIG_ENV2METRIC_SNTP_SERVER
 
 ## 构建环境
 
-ESP-IDF 和工具链安装在 Git 仓库上一级的工作区内，避免污染全局环境：
+使用 ESP-IDF v5.5.4，与依赖锁文件及已完成的实机验证版本一致。
+
+ESP-IDF 安装步骤见仓库根目录 README。也可以将 ESP-IDF 和工具链安装在 Git 仓库上一级的工作区内：
 
 ```text
 ../third_party/esp-idf
@@ -100,11 +102,17 @@ export IDF_TOOLS_PATH="$ENV2METRIC_WORKSPACE/.espressif"
 . "$ENV2METRIC_WORKSPACE/third_party/esp-idf/export.sh"
 ```
 
-当前组件管理器在本地构建中关闭，USB Host 相关组件已经放在 `firmware/esp32s3/components/`：
+使用 ESP-IDF 官方组件管理器获取 `led_strip`、`usb`、`usb_host_cdc_acm` 和 `usb_host_vcp`。版本在 `main/idf_component.yml` 中声明，并由已提交的 `dependencies.lock` 锁定。首次构建需要联网，组件自动下载到被 Git 忽略的 `managed_components/`，无需手动解包或修改 ESP-IDF 源码。
 
 ```bash
-IDF_COMPONENT_MANAGER=0 idf.py -C firmware/esp32s3 build
+unset IDF_COMPONENT_MANAGER
+idf.py -C firmware/esp32s3 set-target esp32s3
+idf.py -C firmware/esp32s3 build
 ```
+
+`set-target` 仅用于首次构建或切换芯片；后续直接运行 `build`。从原来的手动组件布局迁移时，先执行 `idf.py -C firmware/esp32s3 fullclean`，再运行 `build`，保留已有的 `sdkconfig` 和 `sdkconfig.defaults.local`。
+
+在 Codex 等受限沙箱中，组件管理器可能因无法查询父进程而报 `PermissionError`。此时应授予构建所需的进程和网络访问权限，不要通过关闭组件管理器绕过依赖下载。
 
 ## 序号校验回归测试
 
@@ -129,13 +137,13 @@ macOS 通常会将 YN038 CH340 识别为类似下面的串口：
 烧录：
 
 ```bash
-IDF_COMPONENT_MANAGER=0 idf.py -C firmware/esp32s3 -p /dev/cu.usbserial-xxxx flash
+idf.py -C firmware/esp32s3 -p /dev/cu.usbserial-xxxx flash
 ```
 
 查看日志：
 
 ```bash
-IDF_COMPONENT_MANAGER=0 idf.py -C firmware/esp32s3 -p /dev/cu.usbserial-xxxx monitor
+idf.py -C firmware/esp32s3 -p /dev/cu.usbserial-xxxx monitor
 ```
 
 退出 monitor 使用 `Ctrl+]`。

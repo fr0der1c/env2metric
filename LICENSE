@@ -36,7 +36,8 @@ Official text: https://creativecommons.org/licenses/by-nc-sa/4.0/
 Third-party material
 --------------------
 Third-party material retains its original licenses and copyright notices.
-In particular, the Espressif components under firmware/esp32s3/components/
+In particular, the Espressif components downloaded to
+firmware/esp32s3/managed_components/
 are licensed under Apache-2.0; see each component's LICENSE file.
 The project licenses above do not replace those licenses or add
 noncommercial restrictions to the third-party material itself.

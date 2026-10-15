@@ -31,12 +31,12 @@
 
 ### 1. 安装 ESP-IDF
 
-项目使用 ESP-IDF 5.5。下面是 macOS/Linux 的隔离安装方式，不会替换系统编译器：
+项目使用 ESP-IDF v5.5.4，与依赖锁文件及已完成的实机验证版本一致。下面是 macOS/Linux 的隔离安装方式，不会替换系统编译器：
 
 ```bash
 mkdir -p ~/esp
 cd ~/esp
-git clone --recursive --branch v5.5.3 https://github.com/espressif/esp-idf.git
+git clone --recursive --branch v5.5.4 https://github.com/espressif/esp-idf.git
 cd esp-idf
 ./install.sh all
 ```
@@ -71,16 +71,24 @@ CONFIG_ENV2METRIC_OTLP_HEADERS="x-oneuptime-token=your-oneuptime-telemetry-inges
 
 ### 3. 编译固件
 
+使用 ESP-IDF 官方组件管理器自动获取 LED 和 USB Host 依赖。首次构建需要联网访问 ESP Component Registry；组件版本由 `idf_component.yml` 和已提交的 `dependencies.lock` 固定，下载目录 `managed_components/` 不需要提交。
+
 ```bash
-IDF_COMPONENT_MANAGER=0 idf.py -C firmware/esp32s3 build
+unset IDF_COMPONENT_MANAGER
+idf.py -C firmware/esp32s3 set-target esp32s3
+idf.py -C firmware/esp32s3 build
 ```
+
+`set-target` 仅在首次构建或切换芯片时执行；后续修改代码后直接运行 `build`。
+
+GitHub Actions 会在推送代码、提交 PR 或手动触发时运行序号校验回归测试，并使用 ESP-IDF v5.5.4 和示例配置编译 ESP32-S3 固件，同时检查依赖锁文件是否发生变化。结果可在仓库的 Actions 页面查看，工作流见 [.github/workflows/firmware.yml](.github/workflows/firmware.yml)。构建使用占位凭据，不需要配置 GitHub Secrets；实际使用时仍需填写自己的 Wi-Fi 和 OneUptime 配置并重新编译。
 
 ### 4. 刷入开发板
 
 先找到开发板串口。macOS 通常是 `/dev/cu.usbserial-*`，Linux 通常是 `/dev/ttyUSB*`。
 
 ```bash
-IDF_COMPONENT_MANAGER=0 idf.py -C firmware/esp32s3 \
+idf.py -C firmware/esp32s3 \
   -p /dev/cu.usbserial-xxxx flash monitor
 ```
 

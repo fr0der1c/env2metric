@@ -1,2 +1,6 @@
 dependencies:
-  espressif/led_strip: "^3.0.0"
+  idf: "==5.5.4"
+  espressif/led_strip: "==3.0.3"
+  espressif/usb: "==1.4.1"
+  espressif/usb_host_cdc_acm: "==2.4.0"
+  espressif/usb_host_vcp: "==1.0.0~5"

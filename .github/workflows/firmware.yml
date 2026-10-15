@@ -1,0 +1,51 @@
+name: Firmware CI
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validator:
+    name: 序号校验回归测试
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - name: 编译并运行回归测试
+        run: |
+          c++ -std=c++17 -Wall -Wextra -Werror -I firmware/esp32s3/main \
+            firmware/esp32s3/main/air_quality_validator.cpp \
+            firmware/esp32s3/tests/air_quality_validator_test.cpp \
+            -o "$RUNNER_TEMP/env2metric-air-quality-validator-test"
+          "$RUNNER_TEMP/env2metric-air-quality-validator-test"
+
+  firmware:
+    name: ESP32-S3 固件构建
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    container:
+      image: espressif/idf:v5.5.4
+    env:
+      IDF_TARGET: esp32s3
+      IDF_COMPONENT_MANAGER: "1"
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - name: 使用示例配置编译固件
+        run: |
+          . "$IDF_PATH/export.sh"
+          cp firmware/esp32s3/sdkconfig.defaults.local.example \
+            firmware/esp32s3/sdkconfig.defaults.local
+          idf.py -C firmware/esp32s3 build
+      - name: 检查依赖锁文件未发生变化
+        run: git diff --exit-code -- firmware/esp32s3/dependencies.lock
