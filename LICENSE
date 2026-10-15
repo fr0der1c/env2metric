@@ -1,0 +1,44 @@
+env2metric licensing
+===================
+
+Copyright (c) 2026 frederic
+
+This project is source-available for noncommercial use. It is not licensed
+under an OSI-approved open source license.
+
+The licenses below apply to the original material in this repository,
+unless a file explicitly states otherwise. They are assigned by scope;
+they are not alternative licenses for the same material.
+
+Software
+--------
+Original firmware, scripts, tests, dashboard configurations, and build
+and configuration files are licensed under the PolyForm Noncommercial
+License 1.0.0. This also applies to compiled forms of the original software.
+
+Full terms: LICENSES/PolyForm-Noncommercial-1.0.0.txt
+Official text: https://polyformproject.org/licenses/noncommercial/1.0.0
+
+Required Notice: Copyright (c) 2026 frederic (env2metric)
+
+Enclosure designs and documentation
+----------------------------------
+Original material under design/, including SCAD sources, STL models,
+images, and documentation, and original project documentation elsewhere
+in the repository are licensed under Creative Commons
+Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0).
+License texts themselves are excluded from this scope.
+
+Attribution: frederic, env2metric
+Full terms: LICENSES/CC-BY-NC-SA-4.0.txt
+Official text: https://creativecommons.org/licenses/by-nc-sa/4.0/
+
+Third-party material
+--------------------
+Third-party material retains its original licenses and copyright notices.
+In particular, the Espressif components under firmware/esp32s3/components/
+are licensed under Apache-2.0; see each component's LICENSE file.
+The project licenses above do not replace those licenses or add
+noncommercial restrictions to the third-party material itself.
+
+The full license texts govern the permissions and conditions for each scope.
