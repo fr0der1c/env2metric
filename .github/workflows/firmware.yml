@@ -44,8 +44,9 @@ jobs:
       - name: 使用示例配置编译固件
         run: |
           . "$IDF_PATH/export.sh"
+          sha256sum firmware/esp32s3/dependencies.lock > "$RUNNER_TEMP/env2metric-dependencies.sha256"
           cp firmware/esp32s3/sdkconfig.defaults.local.example \
             firmware/esp32s3/sdkconfig.defaults.local
           idf.py -C firmware/esp32s3 build
       - name: 检查依赖锁文件未发生变化
-        run: git diff --exit-code -- firmware/esp32s3/dependencies.lock
+        run: sha256sum --check "$RUNNER_TEMP/env2metric-dependencies.sha256"
