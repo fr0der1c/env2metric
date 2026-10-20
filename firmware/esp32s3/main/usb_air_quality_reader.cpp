@@ -8,6 +8,7 @@
 
 #include "esp_err.h"
 #include "esp_log.h"
+#include "esp_timer.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/queue.h"
 #include "freertos/semphr.h"
@@ -21,6 +22,7 @@
 #include "air_quality_validator.hpp"
 #include "otlp_exporter.hpp"
 #include "sample_format.hpp"
+#include "sensor_restart_schedule.hpp"
 #include "status_led_controller.hpp"
 #include "time_sync.hpp"
 #include "wifi_station.hpp"
@@ -70,18 +72,41 @@ bool network_is_ready()
 
 class LineAssembler {
 public:
-    explicit LineAssembler(QueueHandle_t line_queue) : line_queue_(line_queue) {}
-
-    void reset()
+    // 接收回调和采集任务共用缓冲区，通过互斥锁同步复位与数据拼接。
+    explicit LineAssembler(QueueHandle_t line_queue) : line_queue_(line_queue)
     {
-        length_ = 0;
+        mutex_ = xSemaphoreCreateMutex();
+        assert(mutex_ != nullptr);
     }
 
+    // 恢复接收前丢弃残留半行；断线和周期复位都从新的数据行开始。
+    void reset()
+    {
+        xSemaphoreTake(mutex_, portMAX_DELAY);
+        length_ = 0;
+        receiving_ = true;
+        xSemaphoreGive(mutex_);
+    }
+
+    // 复位期间丢弃接收数据，防止旧样本和启动日志进入采集队列。
+    void pause()
+    {
+        xSemaphoreTake(mutex_, portMAX_DELAY);
+        receiving_ = false;
+        length_ = 0;
+        xSemaphoreGive(mutex_);
+    }
+
+    // 在接收状态下拼接整批数据，与采集任务对缓冲区的清理互斥。
     void append(const std::uint8_t* data, std::size_t size)
     {
-        for (std::size_t index = 0; index < size; ++index) {
-            append_byte(static_cast<char>(data[index]));
+        xSemaphoreTake(mutex_, portMAX_DELAY);
+        if (receiving_) {
+            for (std::size_t index = 0; index < size; ++index) {
+                append_byte(static_cast<char>(data[index]));
+            }
         }
+        xSemaphoreGive(mutex_);
     }
 
 private:
@@ -122,6 +147,8 @@ private:
     }
 
     QueueHandle_t line_queue_ = nullptr;
+    SemaphoreHandle_t mutex_ = nullptr;
+    bool receiving_ = true;
     char buffer_[kMaxLineLength] = {};
     std::size_t length_ = 0;
 };
@@ -208,6 +235,27 @@ void configure_line_coding(CdcAcmDevice& device)
     }
 }
 
+// 先释放 RTS 再清除 DTR，使用正常启动时序复位，避免进入下载模式。
+esp_err_t restart_air_quality_device(CdcAcmDevice& device)
+{
+    esp_err_t err = device.set_control_line_state(true, false);
+    if (err != ESP_OK) {
+        return err;
+    }
+    err = device.set_control_line_state(false, false);
+    if (err != ESP_OK) {
+        return err;
+    }
+    vTaskDelay(pdMS_TO_TICKS(100));
+
+    const esp_err_t reset_err = device.set_control_line_state(false, true);
+    vTaskDelay(pdMS_TO_TICKS(200));
+    // 即使断开或控制传输失败，也尝试释放 RTS，不连续补发复位脉冲。
+    const esp_err_t release_err = device.set_control_line_state(false, false);
+    vTaskDelay(pdMS_TO_TICKS(200));
+    return reset_err == ESP_OK ? release_err : reset_err;
+}
+
 std::unique_ptr<CdcAcmDevice> open_air_quality_device(
     const cdc_acm_host_device_config_t& device_config)
 {
@@ -277,7 +325,7 @@ void drain_stale_lines(QueueHandle_t queue)
 
 } // namespace
 
-// 持续采集检测仪数据，USB 断开后清空连接状态并重新打开设备。
+// 持续采集并每七天复位检测仪，USB 断开后清理连接状态并重新打开设备。
 void run_usb_air_quality_collector()
 {
     QueueHandle_t line_queue =
@@ -328,8 +376,26 @@ void run_usb_air_quality_collector()
         ESP_LOGI(kTag, "USB CDC-ACM device opened");
         configure_line_coding(*device);
         update_status(clear_status(), "clear sensor waiting status");
+        SensorRestartSchedule restart_schedule(esp_timer_get_time());
 
         while (xSemaphoreTake(device_disconnected_sem, 0) != pdTRUE) {
+            if (restart_schedule.take_due_attempt(esp_timer_get_time())) {
+                ESP_LOGI(kTag, "weekly sensor restart: issuing USB reset");
+                assembler.pause();
+                drain_stale_lines(line_queue);
+                const esp_err_t err = restart_air_quality_device(*device);
+                if (err == ESP_OK) {
+                    ESP_LOGI(kTag, "USB reset sent; waiting for sensor data");
+                } else {
+                    ESP_LOGW(kTag, "sensor reset failed: %s; no immediate retry",
+                             esp_err_to_name(err));
+                }
+                vTaskDelay(kOpenRetryDelay);
+                drain_stale_lines(line_queue);
+                validator.reset();
+                assembler.reset();
+                continue;
+            }
             RawSensorLine line;
             if (xQueueReceive(line_queue, &line, kLinePollDelay) == pdTRUE) {
                 process_sensor_line(line, validator);

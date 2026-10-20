@@ -10,7 +10,7 @@ permissions:
 
 jobs:
   validator:
-    name: 序号校验回归测试
+    name: 固件逻辑回归测试
     runs-on: ubuntu-24.04
     timeout-minutes: 5
     steps:
@@ -24,6 +24,12 @@ jobs:
             firmware/esp32s3/tests/air_quality_validator_test.cpp \
             -o "$RUNNER_TEMP/env2metric-air-quality-validator-test"
           "$RUNNER_TEMP/env2metric-air-quality-validator-test"
+      - name: 验证检测仪每七天复位一次
+        run: |
+          c++ -std=c++17 -Wall -Wextra -Werror -I firmware/esp32s3/main \
+            firmware/esp32s3/tests/sensor_restart_schedule_test.cpp \
+            -o "$RUNNER_TEMP/env2metric-sensor-restart-schedule-test"
+          "$RUNNER_TEMP/env2metric-sensor-restart-schedule-test"
 
   firmware:
     name: ESP32-S3 固件构建

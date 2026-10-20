@@ -13,6 +13,15 @@
 - 通过 OTLP HTTP 上报真实空气质量指标
 - 上报失败只记录 warning 并继续采集，不重启固件
 - USB 断开后清空残留半行和序号记录，重连后允许检测仪序号重新开始
+- 检测仪每连续连接 7 天后通过 USB 复位一次，不重启 ESP32-S3 网关
+
+## 检测仪定期重启
+
+按检测仪厂商针对 VOC 传感器基线漂移的维护建议，固件使用 `esp_timer_get_time()` 的 64 位单调时间，每连续连接 7×24 小时尝试一次 USB 复位，不依赖 SNTP 时间、时区或固定星期。ESP32-S3 重启或检测仪断开重连后，周期重新计时。复位检查在采集循环中执行；若正在上传样本，会在本次处理结束后检查。
+
+复位采用已在电脑直连及 ESP32-S3 USB Host 上验证的正常启动控制线时序：先释放 RTS、清除 DTR，等待 100ms，再置位 RTS 200ms 后释放，保持 DTR 未置位，避免进入下载模式。复位期间暂停数据拼接，清空待处理样本，并在恢复读取前重置序号校验。ESP32-S3 USB Host 实测中，检测仪在重启约 30 秒后恢复输出，随后自动恢复上报。
+
+复位后 USB 仍在线时保留设备句柄，避免关闭再打开触发额外重启；实际断开时沿用重连流程。控制传输失败时记录 warning，也会尝试释放已置位的 RTS；不立即补发复位请求，连接仍在线时下一次尝试在 7 天后。接收回调与缓冲区清理通过互斥锁同步。
 
 ## 指标
 
@@ -124,6 +133,17 @@ c++ -std=c++17 -Wall -Wextra -Werror -I firmware/esp32s3/main \
   firmware/esp32s3/tests/air_quality_validator_test.cpp \
   -o /tmp/env2metric-air-quality-validator-test
 /tmp/env2metric-air-quality-validator-test
+```
+
+## 定期重启回归测试
+
+使用模拟的单调时间验证七天触发边界、同一周期仅尝试一次、错过多个周期不补发，以及长期运行和断线重连后的计时。测试不操作 USB 设备，也无需实际等待七天：
+
+```bash
+c++ -std=c++17 -Wall -Wextra -Werror -I firmware/esp32s3/main \
+  firmware/esp32s3/tests/sensor_restart_schedule_test.cpp \
+  -o /tmp/env2metric-sensor-restart-schedule-test
+/tmp/env2metric-sensor-restart-schedule-test
 ```
 
 ## 烧录和日志
